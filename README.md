@@ -33,7 +33,7 @@ src/main/java/com/example/todo_app
 
 1. **Clone the repository to your local machine:**
     ```bash
-    git clone https://github.com/your-username/todo-app.git
+    git clone https://github.com/Scroll-master/todo-app.git
     cd todo-app
     ```
 
@@ -84,5 +84,19 @@ src/main/java/com/example/todo_app
     - **DELETE** `http://localhost:8080/api/todos/1`
 
 ## Accessing the H2 Database Console
-The application uses an embedded **H2 database**. The console is accessible at:
+The application uses an embedded **H2 database**. The console is accessible at: `http://localhost:8080/h2-console`
+
+
+Use the following credentials:
+- **JDBC URL**: `jdbc:h2:mem:testdb`
+- **Username**: `sa`
+- **Password**: `password`
+
+## Running Tests
+The project uses **JUnit 5** and **Mockito** for unit testing.
+
+**To run the tests:**
+```bash
+./gradlew clean test
+
 
