@@ -1,47 +1,42 @@
 package com.example.todo_app.model;
 
 import jakarta.persistence.*;
-import java.time.LocalDateTime;
+import lombok.*;
+
+import java.time.Instant;
+import java.util.UUID;
 
 @Entity
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class Todo {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @GeneratedValue(strategy = GenerationType.AUTO) // UUID requires AUTO to generate
+    private UUID id;
 
     private String text;
 
-    private LocalDateTime createdAt;
-    private LocalDateTime updatedAt;
+    private Instant createdAt;
+    private Instant updatedAt;
 
-    public Todo() {
-        // Пустой конструктор для JPA
-    }
-
+    /**
+     * Constructor for creating a new Todo with text.
+     */
     public Todo(String text) {
         this.text = text;
-        this.createdAt = LocalDateTime.now();
-        this.updatedAt = LocalDateTime.now();
+        this.createdAt = Instant.now();
+        this.updatedAt = Instant.now();
     }
 
-    public Long getId() {
-        return id;
-    }
-
-    public String getText() {
-        return text;
-    }
-
-    public void setText(String text) {
-        this.text = text;
-        this.updatedAt = LocalDateTime.now();
-    }
-
-    public LocalDateTime getCreatedAt() {
-        return createdAt;
-    }
-
-    public LocalDateTime getUpdatedAt() {
-        return updatedAt;
+    /**
+     * Method for explicitly updating the text of a task.
+     * @param newText new text for the task
+     */
+    public void applyUpdate(String newText) {
+        this.text = newText;
+        this.updatedAt = Instant.now();
     }
 }

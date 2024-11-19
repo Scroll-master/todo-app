@@ -8,8 +8,10 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
+
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -36,20 +38,28 @@ class TodoServiceTest {
         Todo createdTodo = todoService.createTodo(text);
         assertNotNull(createdTodo);
         assertEquals(text, createdTodo.getText());
+        assertNotNull(createdTodo.getCreatedAt());
+        assertNotNull(createdTodo.getUpdatedAt());
     }
 
     @Test
     void testGetAllTodos() {
-        when(todoRepository.findAll()).thenReturn(List.of(new Todo("Todo 1"), new Todo("Todo 2")));
+        when(todoRepository.findAll()).thenReturn(List.of(
+                new Todo("Todo 1"),
+                new Todo("Todo 2")
+        ));
 
         List<Todo> todos = todoService.getAllTodos();
         assertEquals(2, todos.size());
+        assertEquals("Todo 1", todos.get(0).getText());
+        assertEquals("Todo 2", todos.get(1).getText());
     }
 
     @Test
     void testGetTodoById() {
-        Long id = 1L;
+        UUID id = UUID.randomUUID();
         Todo todo = new Todo("Sample Todo");
+        todo.setId(id); // Устанавливаем UUID для проверки
         when(todoRepository.findById(id)).thenReturn(Optional.of(todo));
 
         Optional<Todo> foundTodo = todoService.getTodoById(id);
@@ -59,19 +69,22 @@ class TodoServiceTest {
 
     @Test
     void testUpdateTodo() {
-        Long id = 1L;
+        UUID id = UUID.randomUUID();
         String updatedText = "Updated Todo";
         Todo existingTodo = new Todo("Old Todo");
+        existingTodo.setId(id); // Устанавливаем UUID для проверки
+
         when(todoRepository.findById(id)).thenReturn(Optional.of(existingTodo));
         when(todoRepository.save(any(Todo.class))).thenReturn(existingTodo);
 
         Todo updatedTodo = todoService.updateTodo(id, updatedText);
         assertEquals(updatedText, updatedTodo.getText());
+        assertNotNull(updatedTodo.getUpdatedAt());
     }
 
     @Test
     void testDeleteTodo() {
-        Long id = 1L;
+        UUID id = UUID.randomUUID();
         doNothing().when(todoRepository).deleteById(id);
 
         todoService.deleteTodo(id);

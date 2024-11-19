@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/todos")
@@ -20,24 +21,26 @@ public class TodoController {
     }
 
     @GetMapping("/{id}")
-    public Todo getTodoById(@PathVariable Long id) {
+    public Todo getTodoById(@PathVariable UUID id) {
         return todoService.getTodoById(id)
                 .orElseThrow(() -> new RuntimeException("Todo not found"));
     }
 
     @PostMapping
-    public Todo createTodo(@RequestBody Todo todo) {
-        return todoService.createTodo(todo.getText());
+    public Todo createTodo(@RequestBody String text) {
+        // Убираем лишние кавычки и пробелы
+        String cleanedText = text.trim().replaceAll("^\"|\"$", ""); // Удаляем кавычки в начале и конце
+        return todoService.createTodo(cleanedText);
     }
 
 
     @PutMapping("/{id}")
-    public Todo updateTodo(@PathVariable Long id, @RequestBody String text) {
+    public Todo updateTodo(@PathVariable UUID id, @RequestBody String text) {
         return todoService.updateTodo(id, text);
     }
 
     @DeleteMapping("/{id}")
-    public void deleteTodo(@PathVariable Long id) {
+    public void deleteTodo(@PathVariable UUID id) {
         todoService.deleteTodo(id);
     }
 }

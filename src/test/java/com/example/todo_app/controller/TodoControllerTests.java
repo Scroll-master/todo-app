@@ -9,6 +9,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.List;
+import java.util.UUID;
 
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -26,7 +27,10 @@ class TodoControllerTest {
 
     @Test
     void testGetAllTodos() throws Exception {
-        when(todoService.getAllTodos()).thenReturn(List.of(new Todo("Test Todo")));
+        Todo todo = new Todo("Test Todo");
+        todo.setId(UUID.randomUUID()); // Set UUID for task
+
+        when(todoService.getAllTodos()).thenReturn(List.of(todo));
 
         mockMvc.perform(get("/api/todos"))
                 .andExpect(status().isOk())
@@ -35,15 +39,21 @@ class TodoControllerTest {
 
     @Test
     void testCreateTodo() throws Exception {
+        // Тестовые данные
         String newTodoText = "New Todo";
         Todo newTodo = new Todo(newTodoText);
+        newTodo.setId(UUID.randomUUID()); // Уникальный идентификатор
+
+        // Настройка мок-сервиса
         when(todoService.createTodo(newTodoText)).thenReturn(newTodo);
 
+        // Отправляем запрос
         mockMvc.perform(post("/api/todos")
                 .contentType(APPLICATION_JSON)
-                .content("{\"text\": \"" + newTodoText + "\"}"))
+                .content("\"" + newTodoText + "\"")) // JSON-строка
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.text").value("New Todo"));
+                .andExpect(jsonPath("$.text").value(newTodoText));
     }
+
 
 }
