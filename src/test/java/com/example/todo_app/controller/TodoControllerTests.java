@@ -39,18 +39,18 @@ class TodoControllerTest {
 
     @Test
     void testCreateTodo() throws Exception {
-        // Тестовые данные
+        // Test data
         String newTodoText = "New Todo";
         Todo newTodo = new Todo(newTodoText);
-        newTodo.setId(UUID.randomUUID()); // Уникальный идентификатор
+        newTodo.setId(UUID.randomUUID()); // Unique identifier
 
-        // Настройка мок-сервиса
+        // Setting up a mock service
         when(todoService.createTodo(newTodoText)).thenReturn(newTodo);
 
-        // Отправляем запрос
+        // Sending a request
         mockMvc.perform(post("/api/todos")
                 .contentType(APPLICATION_JSON)
-                .content("\"" + newTodoText + "\"")) // JSON-строка
+                .content("\"" + newTodoText + "\"")) // JSON string
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.text").value(newTodoText));
     }

@@ -14,6 +14,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 class TodoServiceTest {
@@ -59,7 +60,7 @@ class TodoServiceTest {
     void testGetTodoById() {
         UUID id = UUID.randomUUID();
         Todo todo = new Todo("Sample Todo");
-        todo.setId(id); // Устанавливаем UUID для проверки
+        todo.setId(id); // Set UUID for verification
         when(todoRepository.findById(id)).thenReturn(Optional.of(todo));
 
         Optional<Todo> foundTodo = todoService.getTodoById(id);
@@ -72,7 +73,7 @@ class TodoServiceTest {
         UUID id = UUID.randomUUID();
         String updatedText = "Updated Todo";
         Todo existingTodo = new Todo("Old Todo");
-        existingTodo.setId(id); // Устанавливаем UUID для проверки
+        existingTodo.setId(id); // Set UUID for verification
 
         when(todoRepository.findById(id)).thenReturn(Optional.of(existingTodo));
         when(todoRepository.save(any(Todo.class))).thenReturn(existingTodo);

@@ -29,7 +29,7 @@ public class TodoController {
     @PostMapping
     public Todo createTodo(@RequestBody String text) {
         // Убираем лишние кавычки и пробелы
-        String cleanedText = text.trim().replaceAll("^\"|\"$", ""); // Удаляем кавычки в начале и конце
+        String cleanedText = text.trim().replaceAll("^\"|\"$", ""); // Remove quotes at the beginning and end
         return todoService.createTodo(cleanedText);
     }
 
