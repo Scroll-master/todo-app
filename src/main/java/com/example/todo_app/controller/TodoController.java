@@ -38,18 +38,19 @@ public class TodoController {
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public TodoResponse create(@RequestBody TodoCreateRequest request) {
-        // Передаём объект в сервис
+        // Pass the object to the service
         Todo createdTodo = todoService.create(request.getText());
-        // Преобразуем созданный объект в TodoResponse
+        // Convert the created object to TodoResponse
         return mapToResponse(createdTodo);
     }
 
 
     @PatchMapping("/{id}")
-    public TodoResponse update(@PathVariable UUID id, @RequestBody TodoUpdateRequest request) {
-        Todo updatedTodo = todoService.update(id, request.getText());
-        return mapToResponse(updatedTodo);
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void update(@PathVariable UUID id, @RequestBody TodoUpdateRequest request) {
+        todoService.update(id, request);
     }
+
 
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)

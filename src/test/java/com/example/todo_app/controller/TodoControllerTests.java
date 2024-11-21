@@ -19,6 +19,12 @@ import static org.springframework.http.MediaType.APPLICATION_JSON;
 @WebMvcTest(TodoController.class)
 class TodoControllerTest {
 
+    // Constants for testing
+    private static final String TEST_TEXT = "Test Todo";
+    private static final String NEW_TEXT = "New Todo";
+    private static final UUID TEST_ID = UUID.randomUUID();
+
+
     @Autowired
     private MockMvc mockMvc;
 
@@ -27,34 +33,34 @@ class TodoControllerTest {
 
     @Test
     void testGetAllTodos() throws Exception {
-        Todo todo = new Todo("Test Todo");
-        todo.setId(UUID.randomUUID()); // Set UUID for task
+        Todo todo = new Todo(TEST_TEXT);
+        todo.setId(TEST_ID); // Use constant for UUID
 
         when(todoService.getAll()).thenReturn(List.of(todo));
 
         mockMvc.perform(get("/api/v1/todos"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$[0].text").value("Test Todo"));
+                .andExpect(jsonPath("$[0].text").value(TEST_TEXT));
     }
 
     @Test
     void testCreateTodo() throws Exception {
-        // Тестовые данные
+        // Test data
         TodoCreateRequest request = new TodoCreateRequest();
-        request.setText("New Todo");
+        request.setText(NEW_TEXT);
 
         Todo newTodo = new Todo(request.getText());
-        newTodo.setId(UUID.randomUUID()); // Устанавливаем уникальный идентификатор
+        newTodo.setId(TEST_ID); // Use constant for UUID
 
-        // Настраиваем мок-сервис
+        // Set up a mock service
         when(todoService.create(request.getText())).thenReturn(newTodo);
 
-        // Отправляем запрос
+        // Sending a request
         mockMvc.perform(post("/api/v1/todos")
                 .contentType(APPLICATION_JSON)
-                .content("{\"text\": \"New Todo\"}")) // Объект JSON
-                .andExpect(status().isCreated()) // Проверяем статус 201 Created
-                .andExpect(jsonPath("$.text").value("New Todo")); // Проверяем, что текст задачи совпадает
+                .content("{\"text\": \"" + NEW_TEXT + "\"}")) // Use constant for text
+                .andExpect(status().isCreated()) // Check status 201 Created
+                .andExpect(jsonPath("$.text").value(NEW_TEXT)); // Check that the task text matches
     }
 
 

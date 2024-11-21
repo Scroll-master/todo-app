@@ -1,5 +1,6 @@
 package com.example.todo_app.service;
 
+import com.example.todo_app.dto.TodoUpdateRequest;
 import com.example.todo_app.exception.TodoNotFoundException;
 import com.example.todo_app.model.Todo;
 import com.example.todo_app.repository.TodoRepository;
@@ -35,11 +36,16 @@ public class TodoService {
         return todoRepository.save(todo);
     }
 
-    public Todo update(UUID id, String text) {
-        Todo todo = getTodo(id);
-        todo.applyUpdate(text);
-        return todoRepository.save(todo);
+    public Todo update(UUID id, TodoUpdateRequest request) {
+    return todoRepository.findById(id)
+            .map(existing -> {
+                existing.applyUpdate(request.getText());
+                return existing;
+            })
+            .map(todoRepository::save)
+            .orElseThrow(() -> new TodoNotFoundException("Todo not found with id: " + id));
     }
+
 
     public void delete(UUID id) {
         Todo todo = getTodo(id);

@@ -12,16 +12,19 @@ import static org.junit.jupiter.api.Assertions.*;
 @DataJpaTest
 class TodoRepositoryTest {
 
+    // Constants for the test
+    private static final String TEST_TEXT = "Integration Test Todo";
+
     @Autowired
     private TodoRepository todoRepository;
 
     @Test
     void testSaveAndFind() {
-        Todo todo = new Todo("Integration Test Todo");
+        Todo todo = new Todo(TEST_TEXT); // Use a constant
         todoRepository.save(todo);
 
         List<Todo> todos = todoRepository.findAll();
         assertFalse(todos.isEmpty());
-        assertEquals("Integration Test Todo", todos.get(0).getText());
+        assertEquals(TEST_TEXT, todos.get(0).getText()); // Check text using constant
     }
 }
