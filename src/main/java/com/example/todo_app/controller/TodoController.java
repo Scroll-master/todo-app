@@ -2,6 +2,9 @@ package com.example.todo_app.controller;
 
 import com.example.todo_app.model.Todo;
 import com.example.todo_app.service.TodoService;
+
+import jakarta.validation.Valid;
+
 import com.example.todo_app.dto.TodoCreateRequest;
 import com.example.todo_app.dto.TodoResponse;
 import com.example.todo_app.dto.TodoUpdateRequest;
@@ -37,9 +40,9 @@ public class TodoController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public TodoResponse create(@RequestBody TodoCreateRequest request) {
+    public TodoResponse create(@Valid @RequestBody TodoCreateRequest request) {
         // Pass the object to the service
-        Todo createdTodo = todoService.create(request.getText());
+        Todo createdTodo = todoService.create(request);
         // Convert the created object to TodoResponse
         return mapToResponse(createdTodo);
     }
@@ -61,7 +64,9 @@ public class TodoController {
     private TodoResponse mapToResponse(Todo todo) {
         return TodoResponse.builder()
                 .id(todo.getId().toString())
-                .text(todo.getText())
+                .title(todo.getTitle()) 
+                .description(todo.getDescription()) 
+                .completed(todo.isCompleted()) 
                 .createdAt(todo.getCreatedAt().toString())
                 .updatedAt(todo.getUpdatedAt().toString())
                 .build();

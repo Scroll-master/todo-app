@@ -7,7 +7,9 @@ import lombok.Data;
 @Builder
 public class TodoResponse {
     private String id;
-    private String text;
+    private String title;
+    private String description;
+    private boolean completed;
     private String createdAt;
     private String updatedAt;
 }

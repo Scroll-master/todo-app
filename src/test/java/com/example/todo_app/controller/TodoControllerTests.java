@@ -10,6 +10,8 @@ import org.springframework.test.web.servlet.MockMvc;
 import com.example.todo_app.dto.TodoCreateRequest;
 import java.util.List;
 import java.util.UUID;
+import java.time.Instant;
+
 
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -20,8 +22,8 @@ import static org.springframework.http.MediaType.APPLICATION_JSON;
 class TodoControllerTest {
 
     // Constants for testing
-    private static final String TEST_TEXT = "Test Todo";
-    private static final String NEW_TEXT = "New Todo";
+    private static final String TEST_TITLE = "Test Title";
+    private static final String TEST_DESCRIPTION = "Test Description";
     private static final UUID TEST_ID = UUID.randomUUID();
 
 
@@ -33,36 +35,55 @@ class TodoControllerTest {
 
     @Test
     void testGetAllTodos() throws Exception {
-        Todo todo = new Todo(TEST_TEXT);
-        todo.setId(TEST_ID); // Use constant for UUID
+        // Тестовые данные
+        Todo todo = Todo.builder()
+                .id(TEST_ID)
+                .title(TEST_TITLE) // Используем константу
+                .description(TEST_DESCRIPTION) // Используем константу
+                .completed(false)
+                .createdAt(Instant.now())
+                .updatedAt(Instant.now())
+                .build();
 
+        // Настройка мок-сервиса
         when(todoService.getAll()).thenReturn(List.of(todo));
 
+        // Отправка запроса и проверка ответа
         mockMvc.perform(get("/api/v1/todos"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$[0].text").value(TEST_TEXT));
+                .andExpect(jsonPath("$[0].title").value(TEST_TITLE))
+                .andExpect(jsonPath("$[0].description").value(TEST_DESCRIPTION))
+                .andExpect(jsonPath("$[0].completed").value(false));
     }
+
 
     @Test
     void testCreateTodo() throws Exception {
-        // Test data
+        // Тестовые данные
         TodoCreateRequest request = new TodoCreateRequest();
-        request.setText(NEW_TEXT);
+        request.setTitle(TEST_TITLE);
+        request.setDescription(TEST_DESCRIPTION);
 
-        Todo newTodo = new Todo(request.getText());
-        newTodo.setId(TEST_ID); // Use constant for UUID
+        Todo newTodo = Todo.builder()
+                .id(TEST_ID)
+                .title(TEST_TITLE)
+                .description(TEST_DESCRIPTION)
+                .completed(false)
+                .createdAt(Instant.now())
+                .updatedAt(Instant.now())
+                .build();
 
-        // Set up a mock service
-        when(todoService.create(request.getText())).thenReturn(newTodo);
+        // Настройка мок-сервиса
+        when(todoService.create(any(TodoCreateRequest.class))).thenReturn(newTodo);
 
-        // Sending a request
+        // Отправка запроса и проверка ответа
         mockMvc.perform(post("/api/v1/todos")
                 .contentType(APPLICATION_JSON)
-                .content("{\"text\": \"" + NEW_TEXT + "\"}")) // Use constant for text
-                .andExpect(status().isCreated()) // Check status 201 Created
-                .andExpect(jsonPath("$.text").value(NEW_TEXT)); // Check that the task text matches
+                .content("{\"title\": \"" + TEST_TITLE + "\", \"description\": \"" + TEST_DESCRIPTION + "\"}"))
+                .andExpect(status().isCreated()) // Проверяем, что возвращается статус 201
+                .andExpect(jsonPath("$.title").value(TEST_TITLE))
+                .andExpect(jsonPath("$.description").value(TEST_DESCRIPTION))
+                .andExpect(jsonPath("$.completed").value(false));
     }
-
-
 
 }
